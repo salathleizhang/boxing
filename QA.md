@@ -58,3 +58,12 @@
 - 390×844 和 390×620 窄屏检查：六个选择按钮、确认按钮和底部操作均在窗口内，按钮无横向溢出；预览使用独立响应式场景区域。
 - `npm run build`（资源校验、TypeScript、Vite）和 `npm test`（8 项战斗测试）通过。
 - 截图保存在本地 `.tmp/roster-desktop.png`、`.tmp/nailong-fight.png`、`.tmp/roster-mobile-final.png`、`.tmp/roster-short-screen.png`。本轮未启用真人摄像头。
+
+## 2026-11-08 HI3D v1 10 万面运行版
+
+- 仅以 `hi3d-animation-v1/models/hi3d-*.glb` 为源，原始 GLB / Blender 工程未修改，忽略 Downloads 旧版。
+- 先生成 `output/models/opponents-v1-100k/` 候选版，未直接覆盖正在使用的文件。六个模型的三角面依次为 100000 / 99998 / 99998 / 100000 / 99992 / 100000，每个约 6.31–6.91 MiB。
+- 保留高模平滑法线、UV 和存活顶点的蒙皮权重；17 根骨骼、逆绑定矩阵、四段动画完整保留。安装前对比源数据：全部动画轨道和贴图 payload 完全一致，静态骨骼变换仅允许小于 1e-5 的导出舍入误差。
+- 候选版通过 15 项测试，覆盖六个模型的左右拳、受击、防守、暂停和重置，以及原有战斗判定。
+- 验证通过后运行 `npm run install:opponents`，整套替换 `public/models/opponents/`；上一套运行文件备份到 `.tmp/opponents-before-100k-*`。构建校验使用新 manifest 的 SHA-256。
+- 按用户要求，本轮不继续做浏览器效果预览。
