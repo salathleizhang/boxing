@@ -136,6 +136,7 @@ export function useHandTracking({
     let landmarker: HandLandmarker | null = null;
     let lastDetectAt = 0;
     let lastTimestamp = -1;
+    let lastVideoTime = -1;
     /*
       **动态检测间隔**：`detectForVideo` 是同步的，慢帧会把整个主线程按住
       （用户报的"手不跟着相机走"最可能就是它——几帧之内页面完全冻结，相机转了、手不动）。
@@ -160,12 +161,14 @@ export function useHandTracking({
       if (!video || !task) return;
       // readyState < 2 = 还没有可用帧；videoWidth = 0 时 detectForVideo 会读到空画面
       if (video.readyState < 2 || video.videoWidth === 0) return;
+      if (video.currentTime === lastVideoTime) return;
       const now = performance.now();
       if (now - lastDetectAt < detectInterval) return;
       // 时间戳必须严格递增，否则 MediaPipe 直接抛错
       if (now <= lastTimestamp) return;
       lastDetectAt = now;
       lastTimestamp = now;
+      lastVideoTime = video.currentTime;
 
       const started = performance.now();
       let result: HandLandmarkerResult;
