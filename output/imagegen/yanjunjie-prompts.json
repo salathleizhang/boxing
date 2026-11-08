@@ -1,0 +1,13 @@
+{
+  "generator": "built-in image_gen",
+  "assets": [
+    {
+      "file": "public/ui/yanjunjie-main-event.png",
+      "prompt": "Use case: text-localization. Edit target: the attached RINGSIDE game menu art. Change ONLY the title and tiny ring-apron branding. Replace the enormous left-side English RING / SIDE title with exact Chinese game title \"暴打严俊杰\". Typography must be FIVE correct characters: 暴 打 严 俊 杰. Place \"暴打\" on the first line and \"严俊杰\" on the second line in the same left-side region as the old title, huge beveled brushed-chrome metallic Chinese lettering with black depth and red rim light, retaining the aggressive WWE-like premium PPV style and red underline. IMPORTANT use 严 (not 闫) in this title. Replace small RINGSIDE brand on bottom-right ring apron with \"暴打严俊杰\" or a red slash if too small. Preserve everything else: landscape aspect ratio, original composition, dark empty lower-left area for button overlays, right-side wrestling ring and red ropes, stadium, crowd, smoke, lighting, THE MAIN EVENT text. Do not add people, buttons, extra text, cards or UI."
+    },
+    {
+      "file": "output/imagegen/yanjunjie-post-fight.png",
+      "prompt": "Use case: identity-preserve. Edit target: the attached studio photograph of an adult bald man in thin rectangular eyeglasses, charcoal suit, black shirt and red boxing gloves. Produce one photorealistic staged after-a-boxing-match photograph of this SAME man. Preserve his identity, facial proportions, bald head, glasses, suit, black shirt and red gloves. Show visible but NON-GRAPHIC theatrical sports bruising: blue-purple discoloration around one eye and on cheekbones, a mildly puffy cheek and slightly swollen reddened nose, a tired rueful expression. Keep eyes visible and facial features recognizable. No blood, no open wounds, no severe injury, no disfigurement. Frame from upper thighs to above head, with enough facial detail to clearly see the bruised makeup. Keep the clean light gray studio backdrop and soft professional photographic lighting. No text, no watermark, no other people. This is a fictional boxing-game character promotional photo with movie makeup, not documentation of a real event."
+    }
+  ]
+}

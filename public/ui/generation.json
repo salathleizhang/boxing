@@ -1,0 +1,19 @@
+{
+  "generator": "built-in image_gen",
+  "assets": [
+    {
+      "file": "ringside-main-event.png",
+      "prompt": "Use case: ui-mockup. Asset type: production game menu backdrop, 1536x1024 landscape. Create a spectacular premium WWE-inspired wrestling videogame title screen for the original brand RINGSIDE. Photoreal cinematic arena with a square wrestling ring in the RIGHT TWO THIRDS, three scarlet ropes, black corner pads, dramatic overhead white stadium spotlights, blood-red LED stage, crowd silhouettes, smoke and scattered sparks. No wrestlers. LEFT THIRD very dark smoky charcoal with faint red haze, empty enough for live interface overlays. Across upper left / center-left set enormous beautifully rendered beveled brushed-chrome condensed italic typography on TWO LINES reading exactly \"RING\" then \"SIDE\", with a sweeping red slash beneath. Title occupies x=6%-44%, y=24%-54%. Small text above title reads exactly \"THE MAIN EVENT\". Bottom left stays dark and empty for an interactive red button added later. Bottom right ring apron has very small \"RINGSIDE\" text. Aggressive authentic televised wrestling PPV art direction, gritty black steel, crimson and silver, strong diagonal composition, film grain, razor sharp typography. No interface cards, no buttons, no health meters, no watermarks. This image will be used DIRECTLY as the menu artwork in a game, not as a mockup on a device."
+    },
+    {
+      "file": "ringside-metal-atlas.png",
+      "prompt": "Use case: ui-mockup. Asset type: production 2D game UI texture atlas, landscape 1536x1024, fully opaque. WWE-inspired wrestling PPV game, original RINGSIDE brand. Four horizontal strips perfectly stacked, each occupies exactly one quarter of image height with no gap. STRIP 1 (y 0-25%): a single wide luxurious blood-crimson painted brushed-metal button plate, thin beveled chrome edges, angular clipped ends, black scratches, dramatic bright central red, absolutely NO TEXT OR SYMBOLS. STRIP 2 (y 25-50%): a single wide charcoal black brushed-steel nameplate panel, elegant thin silver beveled edges, angular clipped corners, dark center for white live text, small scarlet accent on left end, NO TEXT. STRIP 3 (y 50-75%): a single wide dark steel panel with elegant gold champagne bevel and corner rivets, black center for live text, no text. STRIP 4 (y 75-100%): wide jet-black textured broadcast scoreboard band, faint diagonal gunmetal scratches, very thin crimson line across top and silver line bottom, no text. All 4 strips edge-to-edge across full image width. Front-on orthographic clean production game textures, low-key brushed-metal detail, realistic materials, no perspective, no shadows outside strip, no labels, no mockup background, no icons, no letters, no watermark. These will be directly sampled as four individual UI panel textures in a game canvas.",
+      "rows": [
+        "crimson button",
+        "steel nameplate",
+        "championship panel",
+        "scoreboard"
+      ]
+    }
+  ]
+}
