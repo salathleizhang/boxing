@@ -8,6 +8,7 @@ export class FightAudio {
   private voices?: VoiceBank;
   private bgm?: HTMLAudioElement;
   private wantBgm = false;
+  private musicPaused = false;
   enabled = true;
   unlock() {
     this.context ??= new AudioContext();
@@ -17,25 +18,30 @@ export class FightAudio {
   }
   startMusic() {
     this.wantBgm = true;
+    this.musicPaused = false;
     if (!this.enabled) return;
     this.bgm ??= this.createBgm();
     void this.bgm.play().catch(() => {});
   }
   stopMusic() {
     this.wantBgm = false;
+    this.musicPaused = false;
     this.bgm?.pause();
     if (this.bgm) this.bgm.currentTime = 0;
   }
   pauseMusic() {
+    this.musicPaused = true;
     this.bgm?.pause();
   }
   resumeMusic() {
+    this.musicPaused = false;
     if (this.wantBgm && this.enabled) void this.bgm?.play().catch(() => {});
   }
   setEnabled(value: boolean) {
     this.enabled = value;
-    if (value) this.resumeMusic();
-    else this.bgm?.pause();
+    if (!value) this.bgm?.pause();
+    else if (this.wantBgm && !this.musicPaused)
+      void this.bgm?.play().catch(() => {});
   }
   private createBgm() {
     const bgm = new Audio(BGM_URL);
