@@ -1,0 +1,30 @@
+{
+  "source": "O3745-拳击场地 (1)/场地.obj",
+  "scale": 0.00012,
+  "sourceDeckY": 5000,
+  "meshes": 95,
+  "originalTriangles": 4894684,
+  "triangles": 931044,
+  "bytes": 33706748,
+  "textures": [
+    "UFC_Banner_06.JPG",
+    "UFC_Banner_07.jpg",
+    "UFC_Banner_10.jpg",
+    "UFC_Banner_01.jpg",
+    "UFC_Banner_03.jpg",
+    "UFC_Banner_02.jpg",
+    "UFC_Banner_08.jpg"
+  ],
+  "bounds": [
+    [
+      -5.25600140625,
+      -0.6000000000000001,
+      -12.456
+    ],
+    [
+      12.456,
+      7.19387765625,
+      5.2560009375000005
+    ]
+  ]
+}
