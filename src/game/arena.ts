@@ -1,8 +1,12 @@
 import * as T from "three";
-import { GAME_TITLE } from "./branding";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { createDownloadedArena } from "./downloadedArena";
 import { createOpponent, disposeObject, material, shape } from "./opponent";
+import { opponentMotion, ATTACK_START, ATTACK_PERIOD } from "./opponentMotion";
+import { getOpponent, type OpponentId } from "./opponents";
 import type { HandTrackingStore } from "../tracking/handTrackingStore";
 import { createPunchGate, detectPunch, isFist, sweptHit, createGuardGate, updateGuard, incomingDamage, punchExtension, isPunching, PUNCH_DURATION, PUNCH_COOLDOWN } from "./combat";
+import type { VoiceEvent } from "./voice";
 import { freshBodyReference, type BodyFrame } from "../tracking/bodyReference";
 export interface FightState {
   phase: "ready" | "playing" | "paused" | "finished";
@@ -28,6 +32,7 @@ export interface ArenaOptions {
   read: () => FightState;
   onChange: () => void;
   onSound: (power: number, blocked: boolean) => void;
+  onVoice?: (event: VoiceEvent) => void;
   cameraEnabled: () => boolean;
   sensitivity: () => number;
   onError: (message: string) => void;
@@ -42,7 +47,7 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
   host.appendChild(renderer.domElement);
   const scene = new T.Scene();
   scene.background = new T.Color("#100b12");
-  scene.fog = new T.FogExp2("#100b12", 0.045);
+  scene.fog = new T.FogExp2("#100b12", 0.018);
   const camera = new T.PerspectiveCamera(58, 1, 0.05, 70);
   camera.position.set(0, 1.68, 2.25);
   camera.lookAt(0, 1.4, -2);
@@ -60,156 +65,10 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
   const sideLight = new T.PointLight("#f26943", 15, 8);
   sideLight.position.set(-3, 2, 1);
   scene.add(sideLight);
-  const steel = material("#202b2d", 0.6),
-    floor = material("#484e4b"),
-    rope = material("#c51935", 0.1);
-  shape(scene, new T.BoxGeometry(8, 0.3, 8), steel, [0, -0.2, 0]);
-  shape(
-    scene,
-    new T.PlaneGeometry(7.8, 7.8),
-    floor,
-    [0, -0.035, 0],
-  ).rotation.x = -Math.PI / 2;
-  // Canvas markings are part of the arena, not a screen-space overlay.
-  const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 1024;
-  const ctx = canvas.getContext("2d")!;
-  ctx.fillStyle = "#38363e";
-  ctx.fillRect(0, 0, 1024, 1024);
-  ctx.strokeStyle = "#655761";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(75, 75, 874, 874);
-  ctx.beginPath();
-  ctx.arc(512, 512, 270, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.save();
-  ctx.translate(512, 512);
-  ctx.rotate(Math.PI);
-  ctx.fillStyle = "#a6969d";
-  ctx.font = "900 106px Arial";
-  ctx.textAlign = "center";
-  ctx.fillText(GAME_TITLE, 0, 25);
-  ctx.font = "20px monospace";
-  ctx.fillText("THE MAIN EVENT", 0, 65);
-  ctx.restore();
-  const tex = new T.CanvasTexture(canvas);
-  tex.colorSpace = T.SRGBColorSpace;
-  shape(
-    scene,
-    new T.PlaneGeometry(7.75, 7.75),
-    new T.MeshStandardMaterial({ map: tex, roughness: 0.95 }),
-    [0, -0.028, 0],
-  ).rotation.x = -Math.PI / 2;
-  for (const x of [-3.65, 3.65])
-    for (const z of [-3.65, 3.65]) {
-      shape(scene, new T.CylinderGeometry(0.08, 0.1, 1.9, 16), steel, [
-        x,
-        0.9,
-        z,
-      ]);
-      for (const y of [0.65, 1.15, 1.65])
-        shape(
-          scene,
-          new T.BoxGeometry(0.23, 0.25, 0.23),
-          material("#151219"),
-          [x, y, z],
-        );
-    }
-  function beam(a: T.Vector3, b: T.Vector3, r: number, mat: T.Material) {
-    const mesh = shape(
-      scene,
-      new T.CylinderGeometry(r, r, a.distanceTo(b), 12),
-      mat,
-      [0, 0, 0],
-    );
-    mesh.position.copy(a).add(b).multiplyScalar(0.5);
-    mesh.quaternion.setFromUnitVectors(
-      new T.Vector3(0, 1, 0),
-      b.clone().sub(a).normalize(),
-    );
-  }
-  for (const y of [0.65, 1.15, 1.65]) {
-    for (const x of [-3.65, 3.65])
-      beam(new T.Vector3(x, y, -3.65), new T.Vector3(x, y, 3.65), 0.025, rope);
-    for (const z of [-3.65, 3.65])
-      beam(
-        new T.Vector3(-3.65, y, z),
-        new T.Vector3(3.65, y, z),
-        0.025,
-        y === 1.75 ? material("#ef2444") : rope,
-      );
-  }
-  // Industrial training hall: repeated windows, wall panels, rafters and strip lights.
-  shape(
-    scene,
-    new T.BoxGeometry(26, 0.15, 26),
-    material("#141a1c"),
-    [0, -0.55, 0],
-  );
-  shape(
-    scene,
-    new T.BoxGeometry(26, 8, 0.2),
-    material("#263033"),
-    [0, 3.5, -9],
-  );
-  for (let x = -12; x <= 12; x += 3) {
-    shape(scene, new T.BoxGeometry(0.18, 8, 0.25), steel, [x, 3.4, -8.8]);
-    shape(scene, new T.BoxGeometry(2.5, 1.8, 0.06), material("#4e6667", 0.2), [
-      x + 1.5,
-      4.4,
-      -8.83,
-    ]);
-    for (const y of [3.8, 4.4, 5])
-      shape(scene, new T.BoxGeometry(2.5, 0.035, 0.09), steel, [
-        x + 1.5,
-        y,
-        -8.77,
-      ]);
-  }
-  for (const z of [-7, -2, 3, 8]) {
-    shape(scene, new T.BoxGeometry(24, 0.18, 0.22), steel, [0, 6, z]);
-    for (const x of [-3, 3]) {
-      shape(
-        scene,
-        new T.BoxGeometry(2.3, 0.04, 0.24),
-        new T.MeshBasicMaterial({ color: "#dbe4d1" }),
-        [x, 5.85, z],
-      );
-    }
-  }
-  // Red LED entrance strips echo the generated PPV menu art.
-  const led = new T.MeshStandardMaterial({ color: "#bd0f2e", emissive: "#f01539", emissiveIntensity: 2.5 });
-  for (const x of [-7, -5.5, 5.5, 7]) {
-    shape(scene, new T.BoxGeometry(0.16, 4.4, 0.12), led, [x, 2.5, -8.6]);
-  }
-  // Back wall typography.
-  const wallCanvas = document.createElement("canvas");
-  wallCanvas.width = 1024;
-  wallCanvas.height = 256;
-  const wc = wallCanvas.getContext("2d")!;
-  wc.fillStyle = "#f2dfe5";
-  wc.font = "900 144px Arial";
-  wc.textAlign = "center";
-  wc.fillText(GAME_TITLE, 512, 170);
-  const wt = new T.CanvasTexture(wallCanvas);
-  wt.colorSpace = T.SRGBColorSpace;
-  shape(
-    scene,
-    new T.PlaneGeometry(8, 2),
-    new T.MeshBasicMaterial({ map: wt, transparent: true }),
-    [0, 2, -8.84],
-  );
-  for (const x of [-6, 6]) {
-    shape(
-      scene,
-      new T.CylinderGeometry(0.35, 0.35, 1.6, 24),
-      material("#302d29"),
-      [x, 1.5, -5],
-    );
-    beam(new T.Vector3(x, 2.3, -5), new T.Vector3(x, 5.9, -5), 0.016, steel);
-  }
-  const opponent = createOpponent();
+  const venue = createDownloadedArena(options.onError);
+  scene.add(venue.root);
+  let opponent = createOpponent();
+  let preview = false;
   opponent.root.position.z = -0.4;
   scene.add(opponent.root);
   void opponent.ready.catch(() =>
@@ -258,15 +117,57 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
     previous = [new T.Vector3(), new T.Vector3()];
   const gates = [createPunchGate(), createPunchGate()];
   let disposed = false;
+  const GLOVE_SCALE = 0.3;
+  void (async () => {
+    const [gltf, baseColor, roughness] = await Promise.all([
+      new GLTFLoader().loadAsync("/models/boxing-glove/glove.glb"),
+      new T.TextureLoader().loadAsync("/models/boxing-glove/basecolor.png"),
+      new T.TextureLoader().loadAsync("/models/boxing-glove/roughness.png"),
+    ]);
+    baseColor.colorSpace = T.SRGBColorSpace;
+    baseColor.anisotropy = 8;
+    roughness.anisotropy = 8;
+    gltf.scene.traverse((object) => {
+      const mesh = object as T.Mesh;
+      if (!mesh.isMesh) return;
+      for (const item of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        const mat = item as T.MeshStandardMaterial;
+        mat.map = baseColor;
+        mat.roughnessMap = roughness;
+        mat.roughness = 1;
+        mat.metalness = 0;
+        // The left glove is mirrored, which reverses triangle winding.
+        mat.side = T.DoubleSide;
+        mat.needsUpdate = true;
+      }
+    });
+    if (disposed) {
+      disposeObject(gltf.scene);
+      return;
+    }
+    // Without forearms the cuff shows a hollow bowl. A rounded cap parented to
+    // the glove closes it and reads as the padded end of the cuff.
+    const cuffGeometry = new T.CapsuleGeometry(0.3, 0.16, 6, 24);
+    const cuffMaterial = new T.MeshStandardMaterial({ color: "#b9302c", roughness: 0.8 });
+    playerGloves.forEach((group, index) => {
+      const side = index === 0 ? -1 : 1;
+      for (const child of [...group.children]) group.remove(child);
+      const model = gltf.scene.clone(true);
+      // The source is a right glove, palm +Z, thumb +X. Roll it 180° about
+      // the fist axis so the palm faces down, then mirror the left glove.
+      model.scale.set(side * GLOVE_SCALE, GLOVE_SCALE, GLOVE_SCALE);
+      model.rotation.set(-Math.PI * 0.36, Math.PI + side * 0.1, side * 0.04);
+      const cuffCap = new T.Mesh(cuffGeometry, cuffMaterial);
+      cuffCap.position.set(0.02, -0.3, 0.03);
+      model.add(cuffCap);
+      group.add(model);
+    });
+  })().catch(() => {
+    // Keep the procedural stand-in gloves if the model cannot be loaded.
+  });
   const guardGates = [createGuardGate(), createGuardGate()];
   const guardHands: [boolean, boolean] = [false, false];
   const observations: ({ x: number; y: number; closed: boolean; size: number } | null)[] = [null, null];
-  const forearms = [-1, 1].map(side => {
-    const mesh = new T.Mesh(new T.CylinderGeometry(.05, .07, 1, 18), material("#b17c60", 0, .72));
-    camera.add(mesh);
-    return { mesh, elbow: new T.Vector3(side * .4, -.75, -.05) };
-  });
-  const armDirection = new T.Vector3(), armMid = new T.Vector3(), armUp = new T.Vector3(0, 1, 0);
   let guardImpact = 0;
   const sparks = new T.Group();
   scene.add(sparks);
@@ -303,7 +204,7 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       isBody = sweptHit(from, to, body, 0.39);
     if (!isHead && !isBody) return;
     punches[side].hit = true;
-    const guarded = isHead && Math.sin(activeTime * 1.1) > 0.83;
+    const guarded = isHead && opponentMotion(activeTime, true).guarding;
     const damage = guarded ? 1 : Math.round(5 + power * 8);
     s.opponentHealth = Math.max(0, s.opponentHealth - damage);
     if (!guarded) {
@@ -319,8 +220,10 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
     s.lastHit = guarded ? "格挡" : isHead ? "精准命中" : "躯干命中";
     s.lastHitAt = performance.now();
     recoil = guarded ? 0.25 : power + 0.35;
+    if (!guarded) opponent.hit(activeTime);
     shake = 0.025;
     options.onSound(power, guarded);
+    options.onVoice?.(guarded ? "block" : "hit");
     for (const p of particles) {
       p.mesh.position.copy(isHead ? head : body);
       p.velocity.set(
@@ -400,7 +303,7 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
     const { width, height } = host.getBoundingClientRect();
     renderer.setSize(width, height);
     camera.aspect = width / height;
-    camera.fov = camera.aspect < 1 ? 80 : 58;
+    camera.fov = preview ? 70 : camera.aspect < 1 ? 80 : 58;
     camera.updateProjectionMatrix();
   };
   const observer = new ResizeObserver(resize);
@@ -429,12 +332,9 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       activeTime = 0;
       attackClock = 0;
     }
-    const attackPhase = attackClock % 4.2;
-    const attack =
-      playing && attackClock > 2 && attackPhase > 3.1
-        ? Math.sin(((attackPhase - 3.1) / 1.1) * Math.PI)
-        : 0;
-    if (attackPhase < 3.1) attackResolved = false;
+    const motion = opponentMotion(activeTime, playing || s.phase === "paused");
+    const attack = playing ? motion.extension : 0;
+    if (attackClock % ATTACK_PERIOD < ATTACK_START) attackResolved = false;
     const frame = options.store.getFrame();
     const fresh = options.cameraEnabled() && options.store.getSnapshot().status === "running"
       && now >= frame.timestampMs && now - frame.timestampMs < 220;
@@ -490,6 +390,7 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       guardImpact = damage < 9 ? 1 : 0;
       shake = damage === 0 ? .018 : damage === 4 ? .045 : .1;
       options.onSound(damage === 0 ? .35 : .65, damage < 9);
+      options.onVoice?.(damage === 0 ? "guard" : "hurt");
       if (s.health === 0) {
         s.phase = "finished"; playing = false;
         s.result = "再来一回合";
@@ -499,9 +400,10 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
     guardImpact = T.MathUtils.damp(guardImpact, 0, 14, dt);
     recoil = T.MathUtils.damp(recoil, 0, 7, dt);
     shake = T.MathUtils.damp(shake, 0, 8, dt);
-    opponent.update(activeTime, playing ? dt : 0, recoil, attack);
+    opponent.update(s.phase === "ready" ? time : activeTime, s.phase === "ready" || playing ? dt : 0, recoil, attack, motion);
+    camera.position.z = preview ? 1.25 : 2.25;
     camera.position.x = Math.sin(time * 34) * shake;
-    camera.position.y = 1.68 + Math.cos(time * 27) * shake * 0.5;
+    camera.position.y = (preview ? 1.25 : 1.68) + Math.cos(time * 27) * shake * 0.5;
     camera.rotation.z = Math.sin(time * 23) * shake * 0.15;
     for (let i = 0; i < 2; i++) {
       const side = i === 0 ? -1 : 1;
@@ -509,7 +411,8 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       const extension = playing ? punchExtension(age) : 0;
       const target = trackedTargets[i];
       const guarding = guardHands[i];
-      target.set(side * (camera.aspect < 1 ? .21 : .32), guarding ? -.045 : -.29, guarding ? -.75 : -.72);
+      // Keep a raised guard beside the face, above the relaxed stance.
+      target.set(side * (camera.aspect < 1 ? .21 : .32), guarding ? .12 : -.29, guarding ? -.75 : -.72);
       const observation = observations[i];
       if (observation && !guarding) {
         const center = reference?.centerX ?? .5;
@@ -530,11 +433,6 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       const glove = playerGloves[i];
       glove.position.lerp(target, 1 - Math.exp(-dt * 24));
       glove.rotation.set(-.1 - extension * .2, side * (.1 + extension * .15), side * (guarding ? -.2 : -.12));
-      const forearm = forearms[i];
-      armDirection.copy(glove.position).sub(forearm.elbow);
-      forearm.mesh.position.copy(armMid.copy(glove.position).add(forearm.elbow).multiplyScalar(.5));
-      forearm.mesh.scale.y = armDirection.length();
-      forearm.mesh.quaternion.setFromUnitVectors(armUp, armDirection.normalize());
       const world = camera.localToWorld(glove.position.clone());
       if (playing && age <= .17 && extension > 0.3) {
         hit(i, punches[i].power, previous[i], world);
@@ -560,10 +458,26 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       uiAt = now;
       publish();
     }
+    if (preview) camera.lookAt(0, 1.1, -.4);
+    else camera.rotation.x = -Math.atan2(.28, 4.25);
+    playerGloves.forEach(g => { g.visible = !preview; });
+    reticle.style.visibility = preview ? "hidden" : "visible";
     renderer.render(scene, camera);
   }
   raf = requestAnimationFrame(animate);
   return {
+    ready: opponent.ready,
+    setPreview(value: boolean) { preview = value; resize(); },
+    selectOpponent(id: OpponentId) {
+      const previousOpponent = opponent;
+      opponent = createOpponent(getOpponent(id));
+      opponent.root.position.z = -.4;
+      scene.add(opponent.root);
+      scene.remove(previousOpponent.root);
+      previousOpponent.dispose();
+      disposeObject(previousOpponent.root);
+      return opponent.ready;
+    },
     punch,
     block: (value: boolean) => {
       block = value;
@@ -582,6 +496,7 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       lastFrame = -1;
       attackClock = 0;
       activeTime = 0;
+      opponent.reset();
       attackResolved = false;
       recoil = 0;
       aim = { x: 0, y: 0 };
@@ -600,11 +515,11 @@ export function createArena(host: HTMLDivElement, options: ArenaOptions) {
       window.removeEventListener("keyup", up);
       window.removeEventListener("blur", blur);
       host.removeEventListener("pointermove", move);
+      venue.dispose();
       opponent.dispose();
       disposeObject(scene);
       renderer.dispose();
       renderer.domElement.remove();
-      reticle.remove();
       reticle.remove();
     },
   };
