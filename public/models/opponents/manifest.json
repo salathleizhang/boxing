@@ -4,15 +4,15 @@
     "source": "hi3d-animation-v1/models/hi3d-nailong.glb",
     "sourceBytes": 68366308,
     "sourceSha256": "9415d4a5f4b16df094c4306fb7131cdc20c22c55f80fa2570a42814c04dc151e",
-    "bytes": 9560940,
-    "sha256": "2760efaa6e826236b29c55322326e2787a3c5c063c6df29f2b435c27bbe923cb",
+    "bytes": 6947076,
+    "sha256": "19c732a7afaaafdbcfd621779b1d20340db56d7f41064df3df401d43cfd31cb7",
     "before": {
       "triangles": 2000000,
       "vertices": 1031930
     },
     "after": {
-      "triangles": 149968,
-      "vertices": 89900
+      "triangles": 100000,
+      "vertices": 62703
     },
     "joints": 17,
     "animations": [
@@ -22,7 +22,8 @@
       "RightPunch"
     ],
     "simplify": {
-      "ratio": 0.075,
+      "targetTriangles": 100000,
+      "ratio": 0.05,
       "error": 0.001
     }
   },
@@ -31,15 +32,15 @@
     "source": "hi3d-animation-v1/models/hi3d-doubao.glb",
     "sourceBytes": 68069040,
     "sourceSha256": "00316fc30c816dd69522477e90088e7f56edbefa7bb9e382e58939606e89c303",
-    "bytes": 9199380,
-    "sha256": "30f162c5ee372b83db50eca3801f25e2bb34571fcd964239bef82d2bc9e2f55f",
+    "bytes": 6621440,
+    "sha256": "25387e8c50b8ac2a160f858b56601d5d74b48e28f09196c3f7349b484cffe6cc",
     "before": {
       "triangles": 2000000,
       "vertices": 1024172
     },
     "after": {
-      "triangles": 149994,
-      "vertices": 82699
+      "triangles": 99998,
+      "vertices": 56199
     },
     "joints": 17,
     "animations": [
@@ -49,7 +50,8 @@
       "RightPunch"
     ],
     "simplify": {
-      "ratio": 0.075,
+      "targetTriangles": 100000,
+      "ratio": 0.05,
       "error": 0.001
     }
   },
@@ -58,15 +60,15 @@
     "source": "hi3d-animation-v1/models/hi3d-niulai.glb",
     "sourceBytes": 68089432,
     "sourceSha256": "42efa38f2b16418b1598c0ee4856523a380c77236674d8a5acae3515d95456ac",
-    "bytes": 9555492,
-    "sha256": "209a0e979a1c80b528d46eab3c19d20fa6ac5e84a6d316ae5c201ac17574d206",
+    "bytes": 6945140,
+    "sha256": "e553b79c0cbbe31fd55200c994fe2cd9498fcf0a6dc5825356e1e9534e0d4049",
     "before": {
       "triangles": 1987580,
       "vertices": 1028401
     },
     "after": {
-      "triangles": 150000,
-      "vertices": 89544
+      "triangles": 99998,
+      "vertices": 62422
     },
     "joints": 17,
     "animations": [
@@ -76,7 +78,8 @@
       "RightPunch"
     ],
     "simplify": {
-      "ratio": 0.0754686603809658,
+      "targetTriangles": 100000,
+      "ratio": 0.0503124402539772,
       "error": 0.001
     }
   },
@@ -85,15 +88,15 @@
     "source": "hi3d-animation-v1/models/hi3d-fengge.glb",
     "sourceBytes": 68151252,
     "sourceSha256": "fdf4a6bb6903f066116de499a61fdfb77c7aaf7dfb7e32ea5907839a4bbff78d",
-    "bytes": 9572448,
-    "sha256": "8e5d1669996fa9713907cf45ac868a25c23b48f5c8303d79d685f173999f04a3",
+    "bytes": 6998904,
+    "sha256": "e230e7ed87332e40100ee2bb0054eaa993743d60a19e846fb1d8555db1eef7cd",
     "before": {
       "triangles": 2000000,
       "vertices": 1015385
     },
     "after": {
-      "triangles": 149984,
-      "vertices": 81540
+      "triangles": 100000,
+      "vertices": 55122
     },
     "joints": 17,
     "animations": [
@@ -103,7 +106,8 @@
       "RightPunch"
     ],
     "simplify": {
-      "ratio": 0.075,
+      "targetTriangles": 100000,
+      "ratio": 0.05,
       "error": 0.001
     }
   },
@@ -112,15 +116,15 @@
     "source": "hi3d-animation-v1/models/hi3d-cxk.glb",
     "sourceBytes": 68635100,
     "sourceSha256": "d9acbac6e272c14121f13cef4ab0d58ff14d7eb2984d999bcb6bd9a53497ad18",
-    "bytes": 9828600,
-    "sha256": "98b8439201eb944e35457d78248702b3021d67eab75f78222856a8c0af78c9de",
+    "bytes": 7249532,
+    "sha256": "96c1557f492f184f313b0e46037c833f2e42e1e85902b341ce1dbd3457f4895a",
     "before": {
       "triangles": 2000000,
       "vertices": 1024018
     },
     "after": {
-      "triangles": 149998,
-      "vertices": 83799
+      "triangles": 99992,
+      "vertices": 57279
     },
     "joints": 17,
     "animations": [
@@ -130,7 +134,8 @@
       "RightPunch"
     ],
     "simplify": {
-      "ratio": 0.075,
+      "targetTriangles": 100000,
+      "ratio": 0.05,
       "error": 0.001
     }
   },
@@ -139,15 +144,15 @@
     "source": "hi3d-animation-v1/models/hi3d-yanjunjie.glb",
     "sourceBytes": 68025384,
     "sourceSha256": "7a60ef2df4fd3bc19ca651e627f81b2377070b27ed82f5a355116a370c0e8d8b",
-    "bytes": 9254708,
-    "sha256": "297f46973cfa0803d8061004086384cff77e1b14c655d02ed4ff0849bdfd1066",
+    "bytes": 6684320,
+    "sha256": "2f1925f76054f17f32390af0da1bae61739fb3a40a41c50218f2051c295e6312",
     "before": {
       "triangles": 2000000,
       "vertices": 1020918
     },
     "after": {
-      "triangles": 149998,
-      "vertices": 82099
+      "triangles": 100000,
+      "vertices": 55745
     },
     "joints": 17,
     "animations": [
@@ -157,7 +162,8 @@
       "RightPunch"
     ],
     "simplify": {
-      "ratio": 0.075,
+      "targetTriangles": 100000,
+      "ratio": 0.05,
       "error": 0.001
     }
   }
