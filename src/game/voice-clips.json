@@ -1,0 +1,95 @@
+{
+  "sourceDir": ".voice-src",
+  "clips": [
+    {
+      "id": "nailong-haha",
+      "file": "nailong-haha",
+      "source": "BV1pJA6zkExy.wav",
+      "start": 10.8,
+      "end": 13.2,
+      "text": "哈哈哈",
+      "events": ["hit"],
+      "gain": 0.9
+    },
+    {
+      "id": "doubao-sorry",
+      "file": "doubao-sorry",
+      "source": "BV17CZsBVE1V.wav",
+      "start": 4.0,
+      "end": 6.8,
+      "text": "对不起我错了",
+      "events": ["hit", "block"],
+      "gain": 0.9
+    },
+    {
+      "id": "niulai-mama",
+      "file": "niulai-mama",
+      "source": "BV16Ub16MEKa.wav",
+      "start": 3.0,
+      "end": 7.4,
+      "text": "妈妈～",
+      "events": ["hurt"],
+      "gain": 0.9
+    },
+    {
+      "id": "fengge-haoshi-1",
+      "file": "fengge-haoshi-1",
+      "source": "BV1vybzzoEFh.wav",
+      "start": 8.8,
+      "end": 11.5,
+      "text": "这是好事儿啊",
+      "events": ["block"],
+      "gain": 0.85
+    },
+    {
+      "id": "fengge-haoshi-2",
+      "file": "fengge-haoshi-2",
+      "source": "BV1vybzzoEFh.wav",
+      "start": 12.6,
+      "end": 15.3,
+      "text": "这是个好事儿啊",
+      "events": ["block"],
+      "gain": 0.85
+    },
+    {
+      "id": "caixukun-changtiao",
+      "file": "caixukun-changtiao",
+      "source": "BV13s3szYEwH.wav",
+      "start": 6.35,
+      "end": 9.15,
+      "text": "喜欢唱、跳、rap、篮球",
+      "events": ["hit"],
+      "gain": 0.9
+    },
+    {
+      "id": "zhexue-thatsgood-1",
+      "file": "zhexue-thatsgood-1",
+      "source": "BV13s4H6SEHj.wav",
+      "start": 128.1,
+      "end": 129.9,
+      "text": "啊，That's good!",
+      "events": ["hit"],
+      "gain": 0.85
+    },
+    {
+      "id": "zhexue-ohyeah",
+      "file": "zhexue-ohyeah",
+      "source": "BV13s4H6SEHj.wav",
+      "start": 142.1,
+      "end": 143.8,
+      "text": "哦耶！哦耶~",
+      "events": ["hit"],
+      "gain": 0.85
+    },
+    {
+      "id": "zhexue-thatsgood-2",
+      "file": "zhexue-thatsgood-2",
+      "source": "BV13s4H6SEHj.wav",
+      "start": 165.3,
+      "end": 166.5,
+      "text": "That's good!",
+      "events": ["hit"],
+      "gain": 0.85
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Voice clip preview</title>
+    <style>
+      :root { color-scheme: dark; }
+      body {
+        margin: 0; padding: 32px 20px;
+        background: #100b12; color: #f4ece6;
+        font: 15px/1.5 ui-sans-serif, system-ui, "PingFang SC", sans-serif;
+      }
+      h1 { font-size: 18px; letter-spacing: .14em; text-transform: uppercase; color: #cde7a5; }
+      p { color: #9c8f94; max-width: 640px; }
+      ul { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; max-width: 640px; }
+      li {
+        display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+        padding: 14px 16px; border: 1px solid #34272c; border-radius: 10px;
+        background: #191118;
+      }
+      .meta { min-width: 0; }
+      .name { font-weight: 600; }
+      .text { color: #cde7a5; font-size: 13px; }
+      .id { color: #6f646a; font-size: 12px; font-variant-numeric: tabular-nums; }
+      audio { width: 240px; }
+      @media (max-width: 560px) {
+        li { grid-template-columns: 1fr; }
+        audio { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Voice clip preview</h1>
+    <p>试听 <code>public/audio/voice/</code> 下的切片。要改起止点，编辑 <code>src/game/voice-clips.json</code> 后运行 <code>npm run build:voices</code>。</p>
+    <ul id="list"></ul>
+    <script type="module">
+      const clips = [
+        ["nailong-haha", "奶龙", "哈哈哈"],
+        ["doubao-sorry", "豆包", "对不起我错了"],
+        ["niulai-mama", "牛来", "妈妈～"],
+        ["fengge-haoshi-1", "峰哥 01", "这是好事儿啊"],
+        ["fengge-haoshi-2", "峰哥 02", "这是个好事儿啊"],
+        ["caixukun-changtiao", "蔡徐坤", "喜欢唱、跳、rap、篮球"],
+        ["zhexue-thatsgood-1", "哲学 01", "啊，That's good!"],
+        ["zhexue-ohyeah", "哲学 02", "哦耶！哦耶~"],
+        ["zhexue-thatsgood-2", "哲学 03", "That's good!"],
+      ];
+      const list = document.getElementById("list");
+      for (const [id, name, text] of clips) {
+        const li = document.createElement("li");
+        li.innerHTML = `<div class="meta"><div class="name">${name}</div><div class="text">${text}</div><div class="id">${id}.mp3</div></div>`;
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        audio.preload = "none";
+        audio.src = `./${id}.mp3`;
+        li.append(audio);
+        list.append(li);
+      }
+    </script>
+  </body>
+</html>

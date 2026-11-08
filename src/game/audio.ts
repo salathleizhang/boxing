@@ -1,14 +1,48 @@
 import { VoiceBank, type VoiceEvent } from "./voice";
 
+// KOF '97 background loop, copied from kof-ai/public/assets/music/menu.m4a.
+const BGM_URL = "/audio/music/kof97-bgm.m4a";
+
 export class FightAudio {
   private context?: AudioContext;
   private voices?: VoiceBank;
+  private bgm?: HTMLAudioElement;
+  private wantBgm = false;
   enabled = true;
   unlock() {
     this.context ??= new AudioContext();
     this.voices ??= new VoiceBank(this.context);
     void this.voices.preload();
     void this.context.resume();
+  }
+  startMusic() {
+    this.wantBgm = true;
+    if (!this.enabled) return;
+    this.bgm ??= this.createBgm();
+    void this.bgm.play().catch(() => {});
+  }
+  stopMusic() {
+    this.wantBgm = false;
+    this.bgm?.pause();
+    if (this.bgm) this.bgm.currentTime = 0;
+  }
+  pauseMusic() {
+    this.bgm?.pause();
+  }
+  resumeMusic() {
+    if (this.wantBgm && this.enabled) void this.bgm?.play().catch(() => {});
+  }
+  setEnabled(value: boolean) {
+    this.enabled = value;
+    if (value) this.resumeMusic();
+    else this.bgm?.pause();
+  }
+  private createBgm() {
+    const bgm = new Audio(BGM_URL);
+    bgm.loop = true;
+    bgm.preload = "auto";
+    bgm.volume = 0.32;
+    return bgm;
   }
   voice(event: VoiceEvent) {
     if (!this.enabled) return;
@@ -44,6 +78,9 @@ export class FightAudio {
     }
   }
   dispose() {
+    this.stopMusic();
+    this.bgm = undefined;
+    this.voices?.dispose();
     void this.context?.close();
   }
 }
