@@ -1,0 +1,5 @@
+{
+  "generator": "built-in image_gen",
+  "file": "public/ui/yanjunjie-main-event-portrait-v2.png",
+  "prompt": "Use case: text-localization. Edit this exact game homepage banner. Correct ONE Chinese character in the metallic title: replace surname 严 with 闫. Final title must read EXACTLY \"暴打闫俊杰\", top line \"暴打\", second line \"闫俊杰\". The correct surname 闫 is the 门 enclosure with 三 inside. Match the current huge beveled brushed-silver Chinese metal typography with red edge lighting and black depth. Preserve every other element exactly: portrait identity and expression, facial bruises, glasses, face position/size, suit, arena background, red ropes, spotlights, smoke, THE MAIN EVENT text, red underline, image aspect ratio, overall composition. Only change the first character of the second title line, preserving 俊杰. No extra text, no watermark."
+}

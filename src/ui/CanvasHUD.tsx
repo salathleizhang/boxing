@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FightState } from '../game/arena';
-import { OPPONENT } from '../game/opponent';
+import { OPPONENTS, type OpponentId, type OpponentProfile } from '../game/opponents';
 import { GAME_TITLE } from '../game/branding';
 
-type Action = { id: string; label: string; x: number; y: number; w: number; h: number; run: () => void; disabled?: boolean; hold?: boolean };
+type Action = { id: string; label: string; x: number; y: number; w: number; h: number; run: () => void; disabled?: boolean; hold?: boolean; selected?: boolean };
 type Props = {
+  modelLoading: boolean; choosing: boolean; opponent: OpponentProfile; selectOpponent: (id: OpponentId) => void; chooseOpponent: () => void;
   fight: FightState; cameraOn: boolean; trackingText: string; error: string;
   settings: boolean; help: boolean; duration: number; sensitivity: number; sound: boolean;
   start: () => void; pause: () => void; openHelp: () => void; openSettings: () => void;
@@ -24,7 +25,7 @@ export function CanvasHUD(p: Props) {
     const resize = () => setSize({ w: innerWidth, h: Math.max(620, innerHeight) });
     window.addEventListener('resize', resize);
     let active = true;
-    const images = ['yanjunjie-main-event.png', 'ringside-metal-atlas.png'].map(name => {
+    const images = ['yanjunjie-main-event-wide.png', 'ringside-metal-atlas.png', 'yanjunjie-main-event-portrait-v2.png'].map(name => {
       const image = new Image(); image.src = ROOT + name; return image;
     });
     Promise.all(images.map(image => image.decode())).then(() => { if (active) setAssets(images); }).catch(() => {
@@ -45,8 +46,8 @@ export function CanvasHUD(p: Props) {
     const dpr = Math.min(devicePixelRatio, 2); el.width = w * dpr; el.height = h * dpr;
     const c = el.getContext('2d')!; c.scale(dpr, dpr);
     const a: Action[] = [], s = p.fight, modal = p.settings || p.help;
-    const text = (value: string, x: number, y: number, font = 12, color = '#fff', align: CanvasTextAlign = 'left', weight = 500) => {
-      c.fillStyle = color; c.font = `${weight} ${font}px ${font > 26 ? 'Impact, "Arial Narrow",' : ''} "Arial", "PingFang SC", sans-serif`; c.textAlign = align; c.fillText(value, x, y);
+    const text = (value: string, x: number, y: number, font = 12, color = '#fff', align: CanvasTextAlign = 'left', weight = 500, maxWidth?: number) => {
+      c.fillStyle = color; c.font = `${weight} ${font}px ${font > 26 ? 'Impact, "Arial Narrow",' : ''} "Arial", "PingFang SC", sans-serif`; c.textAlign = align; c.fillText(value, x, y, maxWidth ?? w);
     };
     const panel = (row: number, x: number, y: number, pw: number, ph: number) => {
       if (assets[1]) c.drawImage(assets[1], 0, row * assets[1].height / 4, assets[1].width, assets[1].height / 4, x, y, pw, ph);
@@ -66,16 +67,59 @@ export function CanvasHUD(p: Props) {
     const stageH = h - top - bottom, stageW = w - pad * 2;
     // Clear only the live arena viewport: the WebGL game remains visible underneath.
     c.clearRect(pad, top, stageW, stageH);
-    if (s.phase === 'ready') {
+    if (p.choosing) {
+      // The same metal atlas as the existing HUD; the live model stays visible in the preview window.
+      const leftW = mobile ? stageW : stageW * .5;
+      const fade = c.createLinearGradient(pad, 0, w - pad, 0);
+      fade.addColorStop(0, '#08090cf5'); fade.addColorStop(.48, '#08090ce8'); fade.addColorStop(1, '#08090c10');
+      c.fillStyle = mobile ? '#08090c22' : fade; c.fillRect(pad, top, stageW, stageH);
+      text('CHOOSE YOUR OPPONENT', pad + 12, top + 20, 10, '#d8bf7e', 'left', 700);
+      text('今晚，谁来应战？', pad + 12, top + (mobile ? 47 : 62), mobile ? 23 : 34, '#fff', 'left', 900);
+      const cardTop = mobile ? top + stageH - 204 : top + 88;
+      const gap = mobile ? 8 : 12, cardW = (leftW - 24 - gap) / 2;
+      const cardH = mobile ? 44 : Math.min(86, (stageH - 168) / 3);
+      OPPONENTS.forEach((opponent, i) => {
+        const x = pad + 12 + i % 2 * (cardW + gap), y = cardTop + Math.floor(i / 2) * (cardH + gap);
+        const selected = p.opponent.id === opponent.id, id = `opponent-${opponent.id}`;
+        c.save();
+        if (hover === id) c.filter = 'brightness(1.3)';
+        panel(selected ? 2 : 1, x, y, cardW, cardH); c.filter = 'none';
+        c.strokeStyle = selected ? '#e4c77e' : '#50454b'; c.lineWidth = selected ? 2 : 1; c.strokeRect(x + 1, y + 1, cardW - 2, cardH - 2);
+        c.fillStyle = opponent.gloves; c.fillRect(x + 2, y + 9, 3, cardH - 18);
+        text(`0${i + 1}`, x + 13, y + (mobile ? 27 : cardH / 2 + 5), mobile ? 12 : 20, selected ? '#edcf89' : '#8a818a');
+        text(opponent.name, x + (mobile ? 38 : 49), y + cardH / 2 + (mobile ? 4 : -2), mobile ? 12 : 16, '#fff', 'left', 700, cardW - (mobile ? 51 : 62));
+        if (!mobile) text(opponent.title, x + 49, y + cardH / 2 + 19, 9, '#b3a5ad');
+        if (selected) text('●', x + cardW - 14, y + 17, 8, '#ebce88', 'right');
+        c.restore();
+        if (!modal) a.push({ id, label: `选择${opponent.name}`, x, y, w: cardW, h: cardH, run: () => p.selectOpponent(opponent.id), selected });
+      });
+      if (!mobile) {
+        const px = pad + stageW * .76;
+        text('FIGHTER PREVIEW / 3D 拳手', px, top + 25, 10, '#baa888', 'center');
+        text(p.opponent.name, px, top + stageH - 90, 32, '#fff', 'center', 900);
+        text(p.opponent.note, px, top + stageH - 61, 11, '#c1b5ba', 'center');
+      } else text(`${p.opponent.name}  /  ${p.opponent.title} · 3D 拳手`, w / 2, top + 68, 10, '#d7c18b', 'center');
+      button('confirm-opponent', p.modelLoading ? '正在载入模型…' : `迎战${p.opponent.name}  →`, pad + 12, top + stageH - 48, leftW - 24, 44, p.start, 0, p.modelLoading);
+    } else if (s.phase === 'ready') {
+      let artX = pad, artY = top, artW = stageW, artH = stageH;
       if (assets[0]) {
-        if (mobile) {
-          // Preserve title art on portrait screens instead of cropping the wordmark away.
-          c.drawImage(assets[0], 0, 0, assets[0].width * .72, assets[0].height, pad, top, stageW, stageH);
-        } else c.drawImage(assets[0], pad, top, stageW, stageH);
+        // Use the panoramic composition on wide screens, the portrait composition on narrower ones.
+        const image = stageW / stageH >= 2.15 ? assets[0] : assets[2];
+        const scale = (mobile ? Math.min : Math.max)(stageW / image.naturalWidth, stageH / image.naturalHeight);
+        artW = image.naturalWidth * scale;
+        artH = image.naturalHeight * scale;
+        artX = pad + (stageW - artW) / 2;
+        artY = top + (stageH - artH) * (mobile ? .2 : .5);
+        c.save();
+        c.beginPath(); c.rect(pad, top, stageW, stageH); c.clip();
+        if (mobile) { c.fillStyle = '#110c10'; c.fillRect(pad, top, stageW, stageH); }
+        c.drawImage(image, artX, artY, artW, artH);
+        c.restore();
       } else { c.fillStyle = '#110c10'; c.fillRect(pad, top, stageW, stageH); text(GAME_TITLE, pad + 24, top + stageH * .42, mobile ? 36 : 64); }
-      const bx = pad + (mobile ? 22 : stageW * .06), by = top + stageH * .72;
+      const bx = pad + (mobile ? 22 : stageW * .06);
+      const by = top + stageH * .72;
       text('你的主场。你的冠军之路。', bx, by - 23, mobile ? 14 : 17, '#e4e1df', 'left', 600);
-      button('start', '进入擂台   /   ENTER THE RING  →', bx, by, mobile ? Math.min(280, stageW - 44) : 320, 60, p.start, 0);
+      button('start', '进入擂台   /   ENTER THE RING  →', bx, by, mobile ? Math.min(280, stageW - 44) : 320, 60, p.chooseOpponent, 0);
       text(`${p.duration / 60} 分钟回合    /    键盘 · 触屏 · 体感`, bx + 6, by + 81, 10, '#bab6ba');
       if (!mobile) {
         text('FIGHT NIGHT', w - pad - 36, top + stageH - 64, 26, '#fff', 'right');
@@ -92,7 +136,7 @@ export function CanvasHUD(p: Props) {
         c.fillStyle = right ? '#dc233e' : '#d6b66c'; c.fillRect(x + 16 + (right ? (nw - 32) * (1 - health / 100) : 0), top + nh + 2, (nw - 32) * health / 100, 5);
       };
       nameplate(pad + 8, 'YOU', 'THE CHALLENGER / 挑战者', s.health, false);
-      nameplate(w - pad - nw - 8, OPPONENT.name, 'THE OPPONENT / 对手', s.opponentHealth, true);
+      nameplate(w - pad - nw - 8, p.opponent.name, p.opponent.title, s.opponentHealth, true);
       const seconds = Math.ceil(s.remaining), time = `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
       text('ROUND 01', w / 2, top + 35, mobile ? 8 : 10, '#c9b47c', 'center');
       text(time, w / 2, top + (mobile ? 62 : 76), mobile ? 25 : 40, '#fff', 'center');
@@ -110,12 +154,13 @@ export function CanvasHUD(p: Props) {
       if (s.phase === 'paused' || s.phase === 'finished') {
         c.fillStyle = '#05060bbb'; c.fillRect(pad, top, stageW, stageH);
         const cw = Math.min(stageW - 24, 540), cx = (w - cw) / 2, cy = top + stageH * .27;
-        panel(2, cx, cy, cw, s.phase === 'finished' ? 255 : 220);
+        panel(2, cx, cy, cw, s.phase === 'finished' ? 255 : 246);
         text(s.phase === 'paused' ? 'INTERMISSION' : 'ROUND COMPLETE', w / 2, cy + 40, 12, '#d8bf7e', 'center', 700);
         text(s.phase === 'paused' ? '保持战意' : s.result, w / 2, cy + 91, mobile ? 29 : 38, '#fff', 'center', 900);
         text(s.phase === 'paused' ? '调整呼吸，重返主场。' : `${s.score} 分    /    ${s.hits} 命中    /    ${s.bestCombo} 最高连击`, w / 2, cy + 124, 12, '#b7b3b7', 'center');
         button('resume', s.phase === 'paused' ? '继续回合  →' : '再战一回合  →', w / 2 - 110, cy + 148, 220, 48, s.phase === 'paused' ? p.pause : p.start, 0);
-        if (s.phase === 'finished') button('home', '返回主场', w / 2 - 60, cy + 207, 120, 32, p.home);
+        button('change-opponent', '更换对手', w / 2 - 110, cy + (s.phase === 'finished' ? 207 : 202), 105, 32, p.chooseOpponent);
+        button('home', '返回主场', w / 2 + 5, cy + (s.phase === 'finished' ? 207 : 202), 105, 32, p.home);
       }
     }
     // Restrained broadcast header and the generated scoreboard texture.
@@ -159,7 +204,7 @@ export function CanvasHUD(p: Props) {
         text(`出拳灵敏度    ${p.sensitivity.toFixed(1)}×`, mx + 32, my + 264, 13, '#ddd6df');
         button('modal-less', '−', mx + mw - 132, my + 240, 44, 38, () => p.setSensitivity(Math.max(.5, Math.round((p.sensitivity - .1) * 10) / 10)));
         button('modal-more', '+', mx + mw - 78, my + 240, 44, 38, () => p.setSensitivity(Math.min(2, Math.round((p.sensitivity + .1) * 10) / 10)));
-        button('modal-sound', `击打音效    ${p.sound ? 'ON ●' : 'OFF ○'}`, mx + 30, my + 300, mw - 60, 43, () => p.setSound(!p.sound));
+        button('modal-sound', `音效与音乐    ${p.sound ? 'ON ●' : 'OFF ○'}`, mx + 30, my + 300, mw - 60, 43, () => p.setSound(!p.sound));
       } else {
         [['01', '握紧双拳，进入状态', '头部、双肩和双手入镜；画面显示拳击手套。'], ['02', '出拳，收回，再出拳', '握拳前伸攻击，收回再出；双拳护脸防守。'], ['03', '随时使用键盘或触屏', 'J / K 出拳 · 空格防守；出拳手暂不能格挡。']].forEach(([n, title, body], i) => { const y = my + 146 + i * 72; text(n, mx + 30, y, 18, '#d5b879'); text(title, mx + 67, y, 13, '#fff', 'left', 700); text(body, mx + 67, y + 25, mobile ? 9 : 11, '#a9a0af'); });
       }
@@ -170,8 +215,8 @@ export function CanvasHUD(p: Props) {
   return <>
     <canvas ref={canvas} className="hud-canvas" aria-hidden="true" />
     <div className="hotspots" role={p.settings || p.help ? 'dialog' : undefined} aria-modal={p.settings || p.help ? true : undefined} aria-label={p.settings ? '赛事设置' : p.help ? '操作指南' : '游戏控制'}>
-      {actions.map(a => <button key={a.id} aria-label={a.label} disabled={a.disabled} style={{ left: a.x, top: a.y, width: a.w, height: a.h }} onMouseEnter={() => setHover(a.id)} onMouseLeave={() => setHover('')} onFocus={() => setHover(a.id)} onBlur={() => setHover('')} onClick={a.run} onPointerDown={a.hold ? e => { e.currentTarget.setPointerCapture(e.pointerId); p.block(true); } : undefined} onPointerUp={a.hold ? () => p.block(false) : undefined} onPointerCancel={a.hold ? () => p.block(false) : undefined} onLostPointerCapture={a.hold ? () => p.block(false) : undefined}>{a.label}</button>)}
+      {actions.map(a => <button key={a.id} aria-label={a.label} aria-pressed={a.selected} disabled={a.disabled} style={{ left: a.x, top: a.y, width: a.w, height: a.h }} onMouseEnter={() => setHover(a.id)} onMouseLeave={() => setHover('')} onFocus={() => setHover(a.id)} onBlur={() => setHover('')} onClick={a.run} onPointerDown={a.hold ? e => { e.currentTarget.setPointerCapture(e.pointerId); p.block(true); } : undefined} onPointerUp={a.hold ? () => p.block(false) : undefined} onPointerCancel={a.hold ? () => p.block(false) : undefined} onLostPointerCapture={a.hold ? () => p.block(false) : undefined}>{a.label}</button>)}
     </div>
-    <span className="sr-only" role="status">{p.fight.phase}，得分 {p.fight.score}，生命值 {p.fight.health}，成功格挡 {p.fight.blocks}，{p.fight.guarding.every(Boolean) ? "双拳防守" : p.fight.guarding.some(Boolean) ? "单手防守" : "防守未举起"}，{p.trackingText}，{p.fight.trackingHint}</span>
+    <span className="sr-only" role="status">当前对手 {p.opponent.name}，{p.choosing ? "选择对手" : p.fight.phase}，得分 {p.fight.score}，生命值 {p.fight.health}，成功格挡 {p.fight.blocks}，{p.fight.guarding.every(Boolean) ? "双拳防守" : p.fight.guarding.some(Boolean) ? "单手防守" : "防守未举起"}，{p.trackingText}，{p.fight.trackingHint}</span>
   </>;
 }

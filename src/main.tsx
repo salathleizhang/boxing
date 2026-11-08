@@ -11,6 +11,7 @@ import { useHandTracking } from "./tracking/useHandTracking";
 import { useBodyTracking } from "./tracking/useBodyTracking";
 import type { BodyFrame } from "./tracking/bodyReference";
 import "./style.css";
+import { DEFAULT_OPPONENT, getOpponent, type OpponentId } from "./game/opponents";
 const initial = (duration = 120): FightState => ({
   phase: "ready",
   remaining: duration,
@@ -35,9 +36,13 @@ function App() {
     arena = useRef<Arena | null>(null),
     fight = useRef(initial()),
     audio = useRef<FightAudio | null>(null),
+    modelVersion = useRef(0),
     body = useRef<BodyFrame>({ reference: null, timestampMs: 0, status: 'unavailable' }),
     store = useRef(createHandTrackingStore()).current;
   const [, render] = useState(0),
+    [modelLoading, setModelLoading] = useState(true),
+    [choosing, setChoosing] = useState(false),
+    [opponentId, setOpponentId] = useState<OpponentId>(DEFAULT_OPPONENT),
     [cameraOn, setCameraOn] = useState(false),
     [settings, setSettings] = useState(false),
     [help, setHelp] = useState(false),
@@ -60,25 +65,46 @@ function App() {
         read: () => fight.current,
         onChange: () => render((x) => x + 1),
         onSound: (p, b) => audio.current?.hit(p, b),
+        onVoice: (event) => audio.current?.voice(event),
         cameraEnabled: () => controls.current.cameraOn,
         sensitivity: () => controls.current.sensitivity,
         onError: setError,
       });
+      const version = ++modelVersion.current;
+      void arena.current.ready.finally(() => {
+        if (version === modelVersion.current) setModelLoading(false);
+      }).catch(() => {});
     } catch {
       setError("3D 场景启动失败，请使用支持 WebGL 2 的浏览器并开启硬件加速。");
     }
     return () => {
+      modelVersion.current++;
       arena.current?.dispose();
       audio.current?.dispose();
     };
   }, [store]);
   useEffect(() => {
-    if (audio.current) audio.current.enabled = sound;
+    audio.current?.setEnabled(sound);
   }, [sound]);
+  useEffect(() => {
+    // Start decoding voice clips on the first gesture so the round intro is ready.
+    const warm = () => {
+      audio.current?.unlock();
+      window.removeEventListener("pointerdown", warm);
+      window.removeEventListener("keydown", warm);
+    };
+    window.addEventListener("pointerdown", warm);
+    window.addEventListener("keydown", warm);
+    return () => {
+      window.removeEventListener("pointerdown", warm);
+      window.removeEventListener("keydown", warm);
+    };
+  }, []);
   useEffect(() => {
     const onVisibility = () => {
       if (document.hidden && fight.current.phase === "playing") {
         fight.current.phase = "paused";
+        audio.current?.pauseMusic();
         render((x) => x + 1);
       }
     };
@@ -111,26 +137,56 @@ function App() {
     return () => window.removeEventListener("keydown", key);
   }, [settings, help]);
   const s = fight.current;
+  function selectOpponent(id: OpponentId) {
+    if ((id === opponentId && !error) || !arena.current) return;
+    const version = ++modelVersion.current;
+    setModelLoading(true); setError('');
+    setOpponentId(id);
+    void arena.current.selectOpponent(id).catch(() => {
+      if (version === modelVersion.current) setError('角色模型加载失败，已保留卡通陪练，可重新选择角色重试。');
+    }).finally(() => {
+      if (version === modelVersion.current) setModelLoading(false);
+    });
+  }
+  function chooseOpponent() {
+    audio.current?.stopMusic();
+    fight.current = initial(duration);
+    arena.current?.reset();
+    arena.current?.setPreview(true);
+    setChoosing(true);
+  }
   function start() {
-    if (!arena.current) return;
+    if (!arena.current || modelLoading) return;
+    setChoosing(false);
+    arena.current.setPreview(false);
     audio.current?.unlock();
+    audio.current?.startMusic();
     audio.current?.bell();
     fight.current = { ...initial(duration), phase: "playing" };
     arena.current.reset();
     render((x) => x + 1);
   }
   function pause() {
-    if (s.phase === "playing") s.phase = "paused";
-    else if (s.phase === "paused") s.phase = "playing";
+    if (s.phase === "playing") {
+      s.phase = "paused";
+      audio.current?.pauseMusic();
+    } else if (s.phase === "paused") {
+      s.phase = "playing";
+      audio.current?.resumeMusic();
+    }
     render((x) => x + 1);
   }
   function openHelp() {
-    if (s.phase === "playing") s.phase = "paused";
+    if (s.phase === "playing") {
+      s.phase = "paused";
+      audio.current?.pauseMusic();
+    }
     setHelp(true);
   }
   function openSettings() {
     if (s.phase === "playing") {
       s.phase = "paused";
+      audio.current?.pauseMusic();
       render((x) => x + 1);
     }
     setSettings(true);
@@ -165,16 +221,16 @@ function App() {
           : "";
   return (
     <main className="app">
-      <div ref={host} className="scene" aria-label="第一人称拳击场景" />
-      <CanvasHUD fight={s} cameraOn={cameraOn} trackingText={trackingText}
+      <div ref={host} className={`scene ${choosing ? "selecting" : ""}`} aria-label="第一人称拳击场景" />
+      <CanvasHUD modelLoading={modelLoading} choosing={choosing} opponent={getOpponent(opponentId)} selectOpponent={selectOpponent} chooseOpponent={chooseOpponent} fight={s} cameraOn={cameraOn} trackingText={trackingText}
         error={error || (cameraOn ? cameraError : "")}
         settings={settings} help={help} duration={duration} sensitivity={sensitivity} sound={sound}
         start={start} pause={pause} openHelp={openHelp} openSettings={openSettings}
         toggleCamera={toggleCamera} close={() => { setSettings(false); setHelp(false); }}
-        home={() => { fight.current = initial(duration); arena.current?.reset(); render(x => x + 1); }}
+        home={() => { audio.current?.stopMusic(); setChoosing(false); arena.current?.setPreview(false); fight.current = initial(duration); arena.current?.reset(); render(x => x + 1); }}
         setDuration={setDuration} setSensitivity={setSensitivity} setSound={setSound}
         punch={side => arena.current?.punch(side)} block={v => arena.current?.block(v)} />
-      <div className={`camera-preview ${cameraOn ? "enabled" : ""}`} style={{ visibility: settings || help ? "hidden" : "visible" }}>
+      <div className={`camera-preview ${cameraOn ? "enabled" : ""}`} style={{ visibility: settings || help || choosing ? "hidden" : "visible" }}>
         <video ref={video} muted playsInline autoPlay />
         {cameraOn && <><span>{s.trackingHint || trackingText}</span><button onClick={toggleCamera} aria-label="关闭摄像头">×</button></>}
       </div>
