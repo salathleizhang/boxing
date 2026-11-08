@@ -1,0 +1,66 @@
+{
+  "id": "fengge",
+  "scope": "All original high-resolution vertices, edges and triangles, every integer frame of all 4 actions",
+  "vertices": 1015385,
+  "triangles": 2000000,
+  "fps": 30,
+  "changed_vertices": 199,
+  "blender_crosscheck_max_error_m": 2.407356265396403e-07,
+  "edge_threshold": {
+    "ratio": 3,
+    "absolute_m": 0.01583333412806193
+  },
+  "double_area_threshold": {
+    "ratio": 8,
+    "absolute_m2": 4.456790570859567e-05
+  },
+  "max_weight_sum_error": 1.1920928955078125e-07,
+  "minimum_weight": 0.0,
+  "max_influences": 4,
+  "actions": {
+    "Idle": {
+      "frames": 61,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 10.502171713694988,
+      "max_double_area_ratio": 119.78733303899301,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.009295090101659298,
+      "end_start_max_distance_m": 0.0,
+      "loop_velocity_discontinuity_m_per_s": 6.444585596909747e-05
+    },
+    "LeftPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 10.43511727789251,
+      "max_double_area_ratio": 117.77057319290672,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.43320465087890625,
+      "end_start_max_distance_m": 0.0
+    },
+    "RightPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 17.045130980499042,
+      "max_double_area_ratio": 269.00338072800145,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.431194931268692,
+      "end_start_max_distance_m": 0.0
+    },
+    "Recoil": {
+      "frames": 16,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 10.43511727789251,
+      "max_double_area_ratio": 117.77057319290672,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.0514310747385025,
+      "end_start_max_distance_m": 0.0
+    }
+  },
+  "finite": true,
+  "passed": true,
+  "elapsed_seconds": 20.271776292007416
+}

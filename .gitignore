@@ -2,3 +2,12 @@ node_modules/
 dist/
 .tmp/
 .DS_Store
+
+.voice-src/
+
+# Source Blender projects and high-poly GLBs; runtime copies live in public/models/opponents/.
+hi3d-animation-v1/blender/
+hi3d-animation-v1/models/
+
+# Staged model optimization output (regenerate with npm run optimize:opponents).
+output/models/

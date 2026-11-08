@@ -1,0 +1,66 @@
+{
+  "id": "caixukun",
+  "scope": "All original high-resolution vertices, edges and triangles, every integer frame of all 4 actions",
+  "vertices": 1024018,
+  "triangles": 2000000,
+  "fps": 30,
+  "changed_vertices": 128,
+  "blender_crosscheck_max_error_m": 2.79967400849699e-07,
+  "edge_threshold": {
+    "ratio": 3,
+    "absolute_m": 0.015833333134651184
+  },
+  "double_area_threshold": {
+    "ratio": 8,
+    "absolute_m2": 4.4567900116060994e-05
+  },
+  "max_weight_sum_error": 1.1920928955078125e-07,
+  "minimum_weight": 0.0,
+  "max_influences": 3,
+  "actions": {
+    "Idle": {
+      "frames": 61,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 5.561225792512612,
+      "max_double_area_ratio": 280.89515344279334,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.009037061594426632,
+      "end_start_max_distance_m": 0.0,
+      "loop_velocity_discontinuity_m_per_s": 6.677533383481205e-05
+    },
+    "LeftPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 7.334457301324815,
+      "max_double_area_ratio": 280.8807591002068,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.3616679310798645,
+      "end_start_max_distance_m": 0.0
+    },
+    "RightPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 6.090126974051626,
+      "max_double_area_ratio": 280.8217226895937,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.3565197288990021,
+      "end_start_max_distance_m": 0.0
+    },
+    "Recoil": {
+      "frames": 16,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 5.527189285667224,
+      "max_double_area_ratio": 280.88759174894415,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.04912224039435387,
+      "end_start_max_distance_m": 0.0
+    }
+  },
+  "finite": true,
+  "passed": true,
+  "elapsed_seconds": 20.82615804101806
+}

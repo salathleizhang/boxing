@@ -1,0 +1,66 @@
+{
+  "id": "niulai",
+  "scope": "All original high-resolution vertices, edges and triangles, every integer frame of all 4 actions",
+  "vertices": 1028401,
+  "triangles": 1987580,
+  "fps": 30,
+  "changed_vertices": 160,
+  "blender_crosscheck_max_error_m": 2.3572582035595738e-07,
+  "edge_threshold": {
+    "ratio": 3,
+    "absolute_m": 0.01583333412806193
+  },
+  "double_area_threshold": {
+    "ratio": 8,
+    "absolute_m2": 4.456790570859567e-05
+  },
+  "max_weight_sum_error": 1.1920928955078125e-07,
+  "minimum_weight": 0.0,
+  "max_influences": 4,
+  "actions": {
+    "Idle": {
+      "frames": 61,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.44466346860799,
+      "max_double_area_ratio": 236.26464783746013,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.016664473339915276,
+      "end_start_max_distance_m": 0.0,
+      "loop_velocity_discontinuity_m_per_s": 0.00013280489656608552
+    },
+    "LeftPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.44425549414751,
+      "max_double_area_ratio": 293.3229375854682,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.3483172655105591,
+      "end_start_max_distance_m": 0.0
+    },
+    "RightPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.44425549414751,
+      "max_double_area_ratio": 236.26274163916517,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.34625905752182007,
+      "end_start_max_distance_m": 0.0
+    },
+    "Recoil": {
+      "frames": 16,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.44466346860799,
+      "max_double_area_ratio": 236.26464783746013,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.07784019410610199,
+      "end_start_max_distance_m": 0.0
+    }
+  },
+  "finite": true,
+  "passed": true,
+  "elapsed_seconds": 23.809903750079684
+}

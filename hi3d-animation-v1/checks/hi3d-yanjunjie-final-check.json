@@ -1,0 +1,65 @@
+{
+  "id": "yanjunjie",
+  "scope": "All original high-resolution vertices, edges and triangles, every integer frame of all 4 actions",
+  "vertices": 1020918,
+  "triangles": 2000000,
+  "fps": 30,
+  "changed_vertices": 0,
+  "edge_threshold": {
+    "ratio": 3,
+    "absolute_m": 0.015833333134651184
+  },
+  "double_area_threshold": {
+    "ratio": 8,
+    "absolute_m2": 4.4567900116060994e-05
+  },
+  "max_weight_sum_error": 1.1920928955078125e-07,
+  "minimum_weight": 0.0,
+  "max_influences": 4,
+  "actions": {
+    "Idle": {
+      "frames": 61,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.260972023010254,
+      "max_double_area_ratio": 344.8572692871094,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.009206179529428482,
+      "end_start_max_distance_m": 0.0,
+      "loop_velocity_discontinuity_m_per_s": 6.552873674081638e-05
+    },
+    "LeftPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.207611083984375,
+      "max_double_area_ratio": 709.0191650390625,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.42783933877944946,
+      "end_start_max_distance_m": 0.0
+    },
+    "RightPunch": {
+      "frames": 34,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 9.262242317199707,
+      "max_double_area_ratio": 340.3025817871094,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.4238353967666626,
+      "end_start_max_distance_m": 0.0
+    },
+    "Recoil": {
+      "frames": 16,
+      "severe_edges_max": 0,
+      "severe_triangles_max": 0,
+      "max_edge_ratio": 8.207611083984375,
+      "max_double_area_ratio": 340.3025817871094,
+      "feet_max_motion_m": 0,
+      "motion_observed_m": 0.049753718078136444,
+      "end_start_max_distance_m": 0.0
+    }
+  },
+  "finite": true,
+  "passed": true,
+  "elapsed_seconds": 158.82356129202526
+}

@@ -1,0 +1,263 @@
+{
+  "version": "v1",
+  "date": "2026-11-08",
+  "fps": 30,
+  "units": "meter",
+  "glb_up_axis": "Y",
+  "glb_forward_axis": "+Z",
+  "characters": [
+    {
+      "id": "nailong",
+      "name": "奶龙",
+      "model": "models/hi3d-nailong.glb",
+      "blender": "blender/hi3d-nailong.blend",
+      "height_m": 1.85,
+      "bytes": 68366308,
+      "bones": 17,
+      "triangles": 2000000,
+      "texture_sizes": [
+        [
+          8192,
+          8192
+        ],
+        [
+          8192,
+          8192
+        ]
+      ],
+      "original_texture_bytes_preserved": true,
+      "clips": {
+        "Idle": {
+          "duration_seconds": 2.0,
+          "channels": 51
+        },
+        "LeftPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        },
+        "Recoil": {
+          "duration_seconds": 0.5,
+          "channels": 51
+        },
+        "RightPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        }
+      },
+      "full_frame_stretch_check": "passed",
+      "final_glb_visual_review": false,
+      "registered_file": "hi3d-boxing-nailong_2.glb"
+    },
+    {
+      "id": "doubao",
+      "name": "豆包",
+      "model": "models/hi3d-doubao.glb",
+      "blender": "blender/hi3d-doubao.blend",
+      "height_m": 1.9,
+      "bytes": 68069040,
+      "bones": 17,
+      "triangles": 2000000,
+      "texture_sizes": [
+        [
+          8192,
+          8192
+        ],
+        [
+          8192,
+          8192
+        ]
+      ],
+      "original_texture_bytes_preserved": true,
+      "clips": {
+        "Idle": {
+          "duration_seconds": 2.0,
+          "channels": 51
+        },
+        "LeftPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        },
+        "Recoil": {
+          "duration_seconds": 0.5,
+          "channels": 51
+        },
+        "RightPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        }
+      },
+      "full_frame_stretch_check": "passed",
+      "final_glb_visual_review": true,
+      "registered_file": "hi3d-boxing-doubao_2.glb"
+    },
+    {
+      "id": "niulai",
+      "name": "牛来",
+      "model": "models/hi3d-niulai.glb",
+      "blender": "blender/hi3d-niulai.blend",
+      "height_m": 1.9,
+      "bytes": 68089432,
+      "bones": 17,
+      "triangles": 1987580,
+      "texture_sizes": [
+        [
+          8192,
+          8192
+        ],
+        [
+          8192,
+          8192
+        ]
+      ],
+      "original_texture_bytes_preserved": true,
+      "clips": {
+        "Idle": {
+          "duration_seconds": 2.0,
+          "channels": 51
+        },
+        "LeftPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        },
+        "Recoil": {
+          "duration_seconds": 0.5,
+          "channels": 51
+        },
+        "RightPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        }
+      },
+      "full_frame_stretch_check": "passed",
+      "final_glb_visual_review": false,
+      "registered_file": "hi3d-boxing-niulai_2.glb"
+    },
+    {
+      "id": "fengge",
+      "name": "峰哥亡命天涯",
+      "model": "models/hi3d-fengge.glb",
+      "blender": "blender/hi3d-fengge.blend",
+      "height_m": 1.9,
+      "bytes": 68151252,
+      "bones": 17,
+      "triangles": 2000000,
+      "texture_sizes": [
+        [
+          8192,
+          8192
+        ],
+        [
+          8192,
+          8192
+        ]
+      ],
+      "original_texture_bytes_preserved": true,
+      "clips": {
+        "Idle": {
+          "duration_seconds": 2.0,
+          "channels": 51
+        },
+        "LeftPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        },
+        "Recoil": {
+          "duration_seconds": 0.5,
+          "channels": 51
+        },
+        "RightPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        }
+      },
+      "full_frame_stretch_check": "passed",
+      "final_glb_visual_review": false,
+      "registered_file": "hi3d-boxing-fengge_2.glb"
+    },
+    {
+      "id": "cxk",
+      "name": "蔡徐坤",
+      "model": "models/hi3d-cxk.glb",
+      "blender": "blender/hi3d-cxk.blend",
+      "height_m": 1.9,
+      "bytes": 68635100,
+      "bones": 17,
+      "triangles": 2000000,
+      "texture_sizes": [
+        [
+          8192,
+          8192
+        ],
+        [
+          8192,
+          8192
+        ]
+      ],
+      "original_texture_bytes_preserved": true,
+      "clips": {
+        "Idle": {
+          "duration_seconds": 2.0,
+          "channels": 51
+        },
+        "LeftPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        },
+        "Recoil": {
+          "duration_seconds": 0.5,
+          "channels": 51
+        },
+        "RightPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        }
+      },
+      "full_frame_stretch_check": "passed",
+      "final_glb_visual_review": false,
+      "registered_file": "hi3d-boxing-caixukun_2.glb"
+    },
+    {
+      "id": "yanjunjie",
+      "name": "闫俊杰",
+      "model": "models/hi3d-yanjunjie.glb",
+      "blender": "blender/hi3d-yanjunjie.blend",
+      "height_m": 1.9,
+      "bytes": 68025384,
+      "bones": 17,
+      "triangles": 2000000,
+      "texture_sizes": [
+        [
+          8192,
+          8192
+        ],
+        [
+          8192,
+          8192
+        ]
+      ],
+      "original_texture_bytes_preserved": true,
+      "clips": {
+        "Idle": {
+          "duration_seconds": 2.0,
+          "channels": 51
+        },
+        "LeftPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        },
+        "Recoil": {
+          "duration_seconds": 0.5,
+          "channels": 51
+        },
+        "RightPunch": {
+          "duration_seconds": 1.1,
+          "channels": 51
+        }
+      },
+      "full_frame_stretch_check": "passed",
+      "final_glb_visual_review": false,
+      "registered_file": "hi3d-boxing-yanjunjie_2.glb"
+    }
+  ],
+  "total_glb_bytes": 409336516
+}
